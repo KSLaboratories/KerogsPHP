@@ -1,0 +1,22 @@
+{
+    "name": "kerogs/kerogs-php",
+    "description": "Simple help library with many features inside.",
+    "type": "package",
+    "require": {
+        "php": ">=8.0"
+    },
+    "license": "Mozilla Public License Version 2.0",
+    "authors": [
+        {
+            "name": "Kerogs",
+            "email": "kerogs.labs@gmail.com"
+        }
+    ],
+    "minimum-stability": "RC",
+    "autoload": {
+        "psr-4": {
+            "Kerogs\\KerogsPhp\\": "src/"
+        }
+    },
+    "version": "1.0.1"
+}
