@@ -46,42 +46,33 @@ class Logs
         bool $logIp = false,
         bool $logRequestData = false
     ): bool {
-        // Si $pathLogs est null, on définit un chemin par défaut
         if ($pathLogs === null) {
             $pathLogs = $_SERVER['DOCUMENT_ROOT'] . "/kp_server.log";
         }
 
-        // Si le fichier est crypté, on le décrypte d'abord
         $isEncrypted = $this->encryptFile && file_exists($pathLogs . '.kpc');
         if ($isEncrypted) {
             $this->encryptDecryptFile($pathLogs . '.kpc', false); // Décrypte vers le fichier .log
         }
 
-        // Récupération de l'identifiant unique et du timestamp
         $uniqid = uniqid();
         $timestamp = (new \DateTime())->format("Y-m-d H:i:s.u");
 
-        // Log IP conditionnel
         $ipv4 = ($logIp && isset($_SERVER['REMOTE_ADDR']) && $this->isValidIpAddress($_SERVER['REMOTE_ADDR']))
             ? $_SERVER['REMOTE_ADDR']
             : "-";
 
-        // Protocole et méthode HTTP
         $httpMethod = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'HTTPS' : 'HTTP';
         $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
         $pathShow = isset($_SERVER['REQUEST_URI']) ? $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] : "-";
         $pathReal = isset($_SERVER['SCRIPT_NAME']) ? $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'] : "-";
 
-        // Récupération des données GET/POST selon le paramètre $logRequestData
         $requestData = $logRequestData ? $this->getRequestData() : "-";
 
-        // Création du contenu du log
         $contentToAdd = "[$statusCode] [$uniqid] $timestamp $ipv4 [$logType] $message [$httpMethod] [$pathShow] ($pathReal) $requestData";
 
-        // Ajout du log au fichier
         $logAdded = $this->prependToFile($pathLogs, $contentToAdd);
 
-        // Cryptage du fichier si demandé et log ajouté avec succès
         if ($logAdded && $this->encryptFile && !empty($this->encryptionKey)) {
             $this->encryptDecryptFile($pathLogs, true); // Recrypte le fichier en .kpc
         }
@@ -102,7 +93,6 @@ class Logs
         $ivLength = openssl_cipher_iv_length($method);
         $iv = substr($this->encryptionKey, 0, $ivLength);
 
-        // Construction des chemins de fichier
         if ($encrypt) {
             if (substr($filePath, -4) !== '.log') {
                 echo "Error: Only '.log' files can be encrypted.";
@@ -116,10 +106,9 @@ class Logs
                 return;
             }
             $inputFilePath = $filePath;
-            $outputFilePath = substr($filePath, 0, -4); // Enlève '.kpc'
+            $outputFilePath = substr($filePath, 0, -4);
         }
 
-        // Vérification de l'existence du fichier source
         if (!file_exists($inputFilePath)) {
             echo "Error: File does not exist - $inputFilePath";
             return;
@@ -145,9 +134,8 @@ class Logs
             }
         }
 
-        // Supprimer le fichier d'entrée après une opération réussie
         if (file_exists($outputFilePath)) {
-            unlink($inputFilePath); // Supprime l'ancien fichier crypté après cryptage ou décryptage réussi
+            unlink($inputFilePath);
         }
     }
 
@@ -173,7 +161,6 @@ class Logs
 
             case 'PUT':
             case 'DELETE':
-                // Récupération des données PUT/DELETE
                 $inputData = file_get_contents('php://input');
                 parse_str($inputData, $data);
                 $data = !empty($data) ? $data : '-';
@@ -184,7 +171,6 @@ class Logs
                 break;
         }
 
-        // Si des données sont présentes, on les encode en JSON
         return $data !== '-' ? json_encode($data) : '-';
     }
 
@@ -208,7 +194,6 @@ class Logs
      */
     private function prependToFile(string $filePath, string $newContent): bool
     {
-        // Crée le fichier s'il n'existe pas
         if (!file_exists($filePath)) {
             $handle = fopen($filePath, 'w');
             if ($handle === false) {

@@ -12,19 +12,30 @@ class Key
 {
     private $typeKey;
     private static $keyTypes = [
-        1 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )'!@#$%^&*", // Mot de passe complexe
-        2 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )'!", // Mot de passe
-        3 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )", // ID, Dossier
-        4 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-", // ID, Dossier, Fichier
-        5 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", // ID, Dossier, Fichier, cryptage
-        6 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", // ID, dossier, fichier
-        7 => "abcdefghijklmnopqrstuvwxyz", // base
-        8 => "0123456789", // suite de nombre
-        9 => "abcdefghijklmnopqrstuvwxyz0123456789" // ID, cryptage
+        1 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )'!@#$%^&*", 
+        2 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )'!", 
+        3 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )", 
+        4 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-", 
+        5 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 
+        6 => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        7 => "abcdefghijklmnopqrstuvwxyz",
+        8 => "0123456789",
+        9 => "abcdefghijklmnopqrstuvwxyz0123456789"
     ];
 
     /**
      * Constructor method for Key class.
+     * 
+     * keylist :
+     *  1 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )'!@#$%^&*
+     *  2 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )'!
+     *  3 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-( )
+     *  4 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-
+     *  5 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+     *  6 : abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+     *  7 : abcdefghijklmnopqrstuvwxyz
+     *  8 : 0123456789
+     *  9 : abcdefghijklmnopqrstuvwxyz0123456789
      *
      * @param int $typeKey Type of the key, corresponds to predefined types.
      */
@@ -46,11 +57,15 @@ class Key
         return self::$keyTypes[$this->typeKey];
     }
 
+
     /**
-     * Generates a random key with a given length.
+     * Generates a random key based on the character set associated with the type of key.
      *
      * @param int $length The length of the key to generate.
-     * @return string The generated key.
+     *
+     * @return string A randomly generated key of the given length based on the associated character set.
+     *
+     * @throws \InvalidArgumentException If the length of the key is not positive.
      */
     public function keyGeneration(int $length): string
     {
@@ -61,7 +76,6 @@ class Key
         $characterSet = $this->getCharacterSet();
         $charsetLength = strlen($characterSet);
 
-        // Generate the key
         $key = '';
         for ($i = 0; $i < $length; $i++) {
             $key .= $characterSet[rand(0, $charsetLength - 1)];
