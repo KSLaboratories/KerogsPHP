@@ -14,43 +14,36 @@ class Sendmail {
     private $customHeader;
     private $contentType;
 
-
-    public function __construct(
     /**
      * Constructor method for Sendmail class.
      * 
      * @param string $from The sender's email address.
-     * @param string $customHeader The custom header for the email. If not specified, a default header will be used.
-     * @param string $contentType The content type of the email. If not specified, a default content type of 'text/html' will be used.
+     * @param string|null $customHeader The custom header for the email. If not specified, a default header will be used.
+     * @param string|null $contentType The content type of the email. If not specified, a default content type of 'text/html' will be used.
      * 
      * @throws \Exception If the sender's email address is not valid.
      */
-        string $from = "",
+    public function __construct(
+        string $from,
         string $customHeader = null,
         string $contentType = null
     ) {
-        if(!$from){
-            throw new \Exception("need a 'from' address");
-        } else{
-            if(!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-                throw new \Exception("invalid 'from' address");
-            } else{
-                $this->from = $from;
-            }
+        if (empty($from)) {
+            throw new \Exception("Sender's email address is required.");
         }
 
-        if($customHeader !== null) {
-            $this->customHeader = $customHeader;
-        } else{
-
-            if($contentType !== null) {
-                $this->$customHeader = "Content-Type: ".$contentType."; charset=utf-8\r\n";
-            } else{
-                $this->$customHeader = "Content-Type: 'text/html'; charset=utf-8\r\n";
-            }
-
-            $this->$customHeader .= "From: " . $this->from."\r\n";
+        if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
+            throw new \Exception("Invalid sender's email address.");
         }
+
+        $this->from = $from;
+
+        // Set content type
+        $this->contentType = $contentType ?? 'text/html';
+
+        // Build headers
+        $this->customHeader = $customHeader ?? "Content-Type: " . $this->contentType . "; charset=utf-8\r\n";
+        $this->customHeader .= "From: " . $this->from . "\r\n";
     }
 
     /**
@@ -64,11 +57,11 @@ class Sendmail {
      * 
      * @throws \Exception If the recipient's email address is not valid.
      */
-    public function sendMail($to, $subject, $message):bool {
-        if(!filter_var($to, FILTER_VALIDATE_EMAIL)) {
-            throw new \Exception("invalid 'to' address");
-        } else{
-            return mail($to, $subject, $message, $this->customHeader);   
+    public function sendMail(string $to, string $subject, string $message): bool {
+        if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            throw new \Exception("Invalid recipient's email address.");
         }
+
+        return mail($to, $subject, $message, $this->customHeader);
     }
 }

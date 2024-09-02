@@ -109,3 +109,24 @@ Encrypt or decrypt a log file.
 ```php
 encryptDecryptFile(string $filePath, bool $encrypt): void
 ```
+
+### Kerogs\KerogsPhp\Sendmail
+You can send your e-mails directly without rewriting the code.
+
+#### Example of us
+```php
+require_once __DIR__.'/vendor/autoload.php';
+
+use Kerogs\KerogsPhp\Sendmail;
+
+const from = "froms@example.com";
+const to = "to@example.com";
+
+$sendmail = new Sendmail(from);
+
+if($sendmail->sendMail(to, "Subject test", "hello world")))
+    echo "Email sent successfully";
+else
+    echo "Email not sent";
+```
+The default content type is ``text/HTML``
