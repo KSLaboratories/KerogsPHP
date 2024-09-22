@@ -113,7 +113,7 @@ encryptDecryptFile(string $filePath, bool $encrypt): void
 ### Kerogs\KerogsPhp\Sendmail
 You can send your e-mails directly without rewriting the code.
 
-#### Example of us
+#### Example of use
 ```php
 require_once __DIR__.'/vendor/autoload.php';
 
@@ -130,3 +130,58 @@ else
     echo "Email not sent";
 ```
 The default content type is ``text/HTML``
+
+### Kerogs\KerogsPhp\Github
+allows you to retrieve information from a GITHUB repository and compare versions.
+
+#### Function list
+
+|function|description|
+|--------|-----------|
+|``Retrieves all repository info (JSON format)``|Retrieves all repository info (JSON format)|
+|``getLatestRelease($owner, $repo, $onlyName = true)``|Retrieves only the name of the latest repository version (or all information on the latest release).|
+|``compareVersions($versionActual, $versionLatest)``|Compares 2 versions (not only works for GITHUB) (its format must be X/X.Y/X.Y.Z/X.Y.Z.F, if there is content after a “-” it will not be taken into account). (will return ``true`` if same version (if not, will return ``above`` or ``below`` the current version.))|
+
+#### Example of use
+```php
+require_once __DIR__.'/vendor/autoload.php';
+
+use Kerogs\KerogsPhp\Github;
+
+$github = new Github();
+
+$lastRelease = $github->compareVersions("1.3.17", $github->getLatestRelease("KSLaboratories", "kerogsPHP", false)['name']);
+
+if($lastRelease['same']) {
+    echo "KerogsPHP is up to date !";
+} else{
+    if($lastRelease['comparison'] === 'above') {
+        echo "KerogsPHP is outdated ! (above)";
+    } else {
+        echo "KerogsPHP is outdated ! (below)";
+    }
+}
+```
+
+### Kerogs\KerogsPhp\Algorithm
+Allows you to manage an algorythm
+
+#### Function list
+
+|function|description|
+|--------|-----------|
+|``similarityPercentage($str1, $str2)``|Returns the similarity percentage|
+|``searchEngine(array $values, $query)``|Returns an array of values. Sort from most similar to least similar|
+
+#### Example of use
+```php
+require_once __DIR__.'/vendor/autoload.php';
+
+use Kerogs\KerogsPhp\Algorithm;
+
+$algo = new Algorithm();
+
+$searchBanana = $algo->searchEngine(['banana', 'apple', 'orange', 'pineapple'], 'banana');
+
+print_r($searchBanana);
+```
